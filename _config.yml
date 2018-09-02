@@ -19,7 +19,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   Programming, Math and other things I like to think about.
 logo: "/assets/global/logo.png"
 
-baseurl: "/5mincode-old" # the subpath of your site, e.g. /blog
+baseurl: "/5mincode" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
