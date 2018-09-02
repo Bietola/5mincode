@@ -1,0 +1,7 @@
+<figure class="align-center">
+  <a href="#">
+  <img src="assets/{{ absolute | absolute_url }}" alt=""></a>
+  {% if include.caption %}
+  <figcaption>"{{ image_path | absolute_url }}"</figcaption>
+  {% endif %}
+</figure>

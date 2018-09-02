@@ -7,7 +7,7 @@ You might have wondered, dear reader, about the wonderful logo of this site (or 
 
 It is, as many other weird objects are, a fractal. Here are some pictures of fractals:
 
-[gallery ids="291,293,292" type="rectangular"]
+![]({{ '/images/mandelbrot.jpg' | absolute_url }})
 
 A fractal consists of a geometrical pattern that repeats itself indefinitely. Of course that is not a formal definition, and some people even use the word fractal while referring to objects that involve no repetitions whatsoever (look up the theory of <b>fractal dimension</b>, for instance). But apart from all the mathematical formalities, I, as many people, enjoy fractals just for the fun of generating them. This, apart from being an excuse to show off pretty pictures to your friends and family, can also be quite nice for getting more comfortable with recursion.
 
@@ -15,11 +15,13 @@ As a matter of fact, the half-assed definition I gave above is pretty similar to
 
 So, the logo is a Pythagoras Tree. A Pythagoras Tree is just the typical picture that is used to represent the Pythagorean theorem...
 
-<img class="alignnone size-full wp-image-399" src="https://5mincode.files.wordpress.com/2017/12/pythagoreantheorem.png" alt="Pythagorean Theorem" width="260" height="210" />
+![]({{ 'images/pythagoreantheorem.png' | absolute_url }})
+
+![]({{ 'images/pythagoreantheorem.png' | absolute_url }})
 
 ...repeated many times over.
 
-<img class="alignnone size-full wp-image-400" src="https://5mincode.files.wordpress.com/2017/12/pythagorastreewolfram.gif" alt="Pythagoras Tree" width="524" height="256" />
+![]({{ 'images/pythagorastreewolfram.gif' | absolute_url }})
 
 You might have noticed that the resulting image is very different from the one posing as the logo, and in facts it pretty much is (good job to you sir!) Today, though, I'll focus on generating Pythagoras trees of this particular kind, as I find them easier to understand.
 
@@ -41,6 +43,7 @@ generateTree(seed) {
 
 Where a node is a single "unit" of a tree. Here's one:
 
+![]({{ 'images/sharpsign.jpg' | absolute_url }})
 <img class="alignnone size-full wp-image-302" src="https://5mincode.files.wordpress.com/2017/10/node.png" alt="node" width="402" height="318" />
 
 Here are three nodes:
@@ -211,7 +214,7 @@ Another reason for representing the tree using a nameless data structure, instea
 <h2>Addressing the Wrong Part</h2>
 The other thing that might have occurred to you is the giant WARNING sign standing on top of the function.
 
-<img class="alignnone size-full wp-image-401" src="https://5mincode.files.wordpress.com/2017/12/sharpsign.jpg" alt="Sharp Sign" width="444" height="410" />
+![]({{ 'images/'}})
 
 The sign is there for a recurring reason in computer science: while the function is mathematically sound and correctly describes a Pythagoras tree, its results are incapable of being handled by a concrete computer program. As Albert Einstein once said,
 
