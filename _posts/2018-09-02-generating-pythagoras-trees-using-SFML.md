@@ -1,5 +1,10 @@
 ---
 layout: post
+image:
+    path: /assets/show/big_ptree.png
+    thumbnail: /assets/show/small_ptree.png
+    caption: "Yes, we will be making these things..."
+author: dincio
 ---
 
 <h2>Introduction</h2>
