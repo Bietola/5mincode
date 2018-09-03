@@ -7,7 +7,7 @@ You might have wondered, dear reader, about the wonderful logo of this site (or 
 
 It is, as many other weird objects are, a fractal. Here are some pictures of fractals:
 
-![]({{ '/images/mandelbrot.jpg' | absolute_url }})
+{% include image path="mandelbrot.jpg" caption="A funky factal." %}
 
 A fractal consists of a geometrical pattern that repeats itself indefinitely. Of course that is not a formal definition, and some people even use the word fractal while referring to objects that involve no repetitions whatsoever (look up the theory of <b>fractal dimension</b>, for instance). But apart from all the mathematical formalities, I, as many people, enjoy fractals just for the fun of generating them. This, apart from being an excuse to show off pretty pictures to your friends and family, can also be quite nice for getting more comfortable with recursion.
 
@@ -43,7 +43,6 @@ generateTree(seed) {
 
 Where a node is a single "unit" of a tree. Here's one:
 
-![]({{ 'images/sharpsign.jpg' | absolute_url }})
 <img class="alignnone size-full wp-image-302" src="https://5mincode.files.wordpress.com/2017/10/node.png" alt="node" width="402" height="318" />
 
 Here are three nodes:
