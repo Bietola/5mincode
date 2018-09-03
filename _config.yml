@@ -16,7 +16,7 @@
 title: The 5 Minute Code
 email: dincio.montesi@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Programming, Math and other things I like to think about.
+  Well this seems easy...
 logo: "/assets/global/logo.png"
 
 baseurl: "/5mincode" # the subpath of your site, e.g. /blog
