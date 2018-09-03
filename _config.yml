@@ -31,6 +31,9 @@ remote_theme: "mmistakes/so-simple-theme"
 plugins:
   - jekyll-feed
 
+# google analytics
+google_analytics: UA-125145949-1
+
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
