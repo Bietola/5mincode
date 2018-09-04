@@ -153,9 +153,9 @@ One way to do this is to project the top base versor onto one of the two legs.
 
 {% include image name="phone7.jpg" caption="No matter the magnitude of the vector chosen to represent the direction of the first leg, our projection will always generate the point constituting the top of the node's triangle." %}
 
-The projection $latex p_w(v)$ of a vector <i>v</i> onto a vector <i>w</i> can be performed using the following formula:
+The projection $$p_w(v)$$ of a vector <i>v</i> onto a vector <i>w</i> can be performed using the following formula:
 
-$latex p_w(v) = \frac {w \cdot v} {w \cdot w} &s=4 w$
+$$ p_w(v) = \frac {w \cdot v} {w \cdot w} $$
 
 But we still need to find the versor indicating the chosen leg's direction (or any other vector pointing the same way). Well, we already have the top base versor (which is equal to the bottom base one), this means that we could just rotate that versor by the angle alpha, given to us through the function parameters, and obtain exactly what we need: the versor indicating the direction of one of the triangle's legs.
 
