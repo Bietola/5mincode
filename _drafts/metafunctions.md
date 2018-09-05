@@ -21,7 +21,9 @@ As promised, here's a list of resources you might also use for learning about me
 * [Practical C++ Metaprogramming](https://www.researchgate.net/publication/323994820_Practical_C_Metaprogramming)  
   A very deep, very recent, diehard dive into modern C++ metaprogramming (think encapsulating-variadic-parameter-packs-into-tuples kind of diehard), all while tackling practical problems. As I read this, I kept thinking about Alexandrescu's older book **Modern C++ Design** and the limitations that its author had to face back then. The two books try to implement similar tools, but what initially required esoteric hacks now seems to smoothly roll out of the standard library.
 * [How to Make SFINAE Pretty](https://www.fluentcpp.com/2018/05/15/make-sfinae-pretty-1-what-value-sfinae-brings-to-code/)  
-  Yes, another Fluent C++ post (I love that site, if you can't already tell). As it always is with Jonathan, the article is aimed at simplifying another abstruse C++ concept. It just happens to be that the topic treated is essential to TMP.
+  Yes, another **Fluent C++** post (I love that site, if you can't already tell). As it always is with Jonathan, the article is aimed at simplifying yet another abstruse C++ concept. It just happens to be that the topic treated is essential to TMP.
+* [Your Own Type Predicate](https://akrzemi1.wordpress.com/2017/12/02/your-own-type-predicate/)  
+  Admittedly a post that made me click about a lot of stuff, most prominently *SFINAE* and its relation to *void_t*'s required existence to implement contracts as of C++17. All in all a very pragmatic and eye-opening introduction to metafunctions and some of their uses and my go-to post when I need a review (apart from my own, of course).
 
 ## How metafunctions work
 
@@ -44,11 +46,7 @@ struct plus_one {
 And here's a full-fledged call to the same full-fledged metafunction:
 
 ``` cpp
-int main() {
-    std::cout << plus_one<1>::value << '\n';
-
-    return 0;
-}
+plus_one<1>::value // returns 2
 ```
 
 Mere simplification can sometimes expose even the nastiest of paradigms. But in case it didn't suffice:
@@ -95,7 +93,7 @@ template <class T> struct remove_pointer<T* volatile>       { using type = T };
 template <class T> struct remove_pointer<T* const volatile> { using type = T };
 ```
 
-As you can see, the same technique is applied to handle more subtle edge cases. For instance, now a *const* *int** will gladly be accepted by the function and transformed into an *int* (deduced as the value of *T*).
+As you can see, the same technique is applied to handle more subtle edge cases. For instance, now a *int\* const* will gladly be accepted by the function and transformed into an *int* (deduced as the value of *T* from the *T\* const* pattern).
 
 But removing qualifiers from types is only the tip of the type manipulation iceberg. Take for instance this jewel of type manipulation, *std::decay* (also stolen from cppreference):
 
@@ -118,19 +116,18 @@ public:
 ```
 
 Isn't it wonderful? Unfortunately, a full explanation is way out the scope of this post, but I figure that showing it might ignite a passion for type manipulation among readers.
-<h2>Making metafunctions more readable</h2>
+
+## Making metafunctions more readable
+
 Inspirational code aside, let's look at another classic type manipulation classic (or rather, type manipulation helper) function:
 
-``` cpp
-template <class T, class = void>
-struct is_asset : std::false_type {};
+<a id="is_same-def"></a>
+```cpp
+template <class T, class U>
+struct is_same : std::false_type {};
 
 template <class T>
-struct is_asset<T,
-    std::void_t<decltype(
-        std::declval<T>().loadFromFile(std::declval<const char*>())
-    )>
-> : std::true_type {};
+struct is_same<T, T> : std::true_type {};
 ```
 
 This particular function is used, quite intuitively, to check if two given types are the same. The first *struct* represents a metafuction that takes two **template parameters** and always return false... or at least it looks like false.
@@ -156,9 +153,9 @@ Which can be used like so:
 template <int n>
 struct plus_one :
     std::integral_constant<int, n + 1> {};
-    ```
+```
 
-As you can see, *std::integral_constant* is just a fancy way of specifying a metafunction return type. Of course it's not just that, as it certainly has other features and uses. For our purposes, though, that's all we need.
+As you can see, *std::integral_constant* is just a fancy way of specifying a metafunction return type. Of course it's not just that, as it certainly has other features and uses. For our purposes, though, that's all we need it for.
 
 As for *std::true_type*, well that's even easier! Possible implementation (also showing off *std::false_type*):
 
@@ -191,11 +188,33 @@ struct is_zero<0> {
 };
 ```
 
-[TODO: turn following explanation of type templates from void_t to is_same_v. Also add a \_t example. Also modify example of is_same above to include a type alias declaration and function invocation example.]
+All right, that's out of the way. We can now effortlessly test our is_same function. Let's use the one kindly offered to us by the **C++ standard library**:
 
-All right, that's out of the way... but what about that call to *std::void_t*? It looks weird for a number of reasons, most prominent of the which might be the *_t* sticking out the back. Let's address that next.
+```cpp
+std::is_same<int, int> // should return true...
+```
 
-So, sometimes, out in the wild, instead of seeing this:
+And of course the above program outputs *true*:
+
+```
+error: expected primary-expression before '<<' token
+```
+
+Wait what?
+
+Oh yes, we forgot to retrieve the value! Remember that *std::is_same* is just [a templated struct wrapping the result of our operation](#is_same-def), which we need to access explicitly.
+
+```cpp
+std::is_same<int, int>::value // returns true
+```
+
+This is a bit redundant though. After all, did ever need to specify that you needed the return value of a function upon calling it?
+
+``` cpp
+int x = f("hello")::return_value;
+```
+
+Not really. Or at least this is what the standard committee thought. So, sometimes, out in the wild, instead of seeing this:
 
 ``` cpp
 typename std::remove_pointer<int*>::type x = 5;
@@ -217,17 +236,19 @@ using remove_pointer_t = typename remove_pointer<T>::type;
 ...called an **alias template**, saves us the chore of accessing the *::type* alias every time we use a metafunction. And as *_t* works for **types**, *_v* works for **values**:
 
 ``` cpp
-template <typename T>
-bool is_zero_v = is_zero<T>::value;
+template <typename T, typename U>
+inline constexpr bool is_same_v = is_same<T, U>::value;
 ```
 
-Pretty self explanatory. All using the all-new exclusive C++14 feature of **variable templates**. So that templates may keep subtly invading the language, one syntactic construct at a time.
+Pretty self explanatory. All using the new C++17 shiny feature of **variable templates**. So that templates may keep subtly invading the language, one syntactic construct at a time.
 
-Ok, let's have a look at that hideous thing one last time:
+So now calling our *is_same* metafunction has become a breeze:
 
-``` cpp
-
+```cpp
+std::is_same_v<int, int> // returns true
 ```
+
+And of course, as you might have noticed, the standard library provides a variable template alias (that is, a *_v* equivalent) for each and every of its value-returning metafunctions.
 
 Congratulations, you can now write your own metafunctions! Granted I haven't actually given an in-depth explanation of any practical example. But remember that this is not what this post was about.
 
