@@ -20,6 +20,8 @@ twitter_username: jekyllrb
 github_username:  jekyll
 mathjax: true
 google_analytics: UA-125145949-1
+disqus:
+  shortname: 5mincode
 
 # Build settings
 markdown: kramdown
