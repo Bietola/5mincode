@@ -170,11 +170,11 @@ Now for the part we've all been waiting for. Behold, the tree generation functio
 ``` cpp
 //generates a whole tree (returning its points in drawing order) given the parameters of the root node
 //WARNING: this function is rong!
-std::vector
+std::vector<sf::Vector2f>
 PTree::generateTree(const sf::Vector2f& baseP1,
                     const sf::Vector2f& baseP2, float angle) {
     //result of function
-    std::vector treePoints;
+    std::vector<sf::Vector2f> treePoints;
 
     //generate the node
     auto node = generateNode(baseP1, baseP2, angle);
@@ -207,7 +207,7 @@ This is also the reason we need to convert the node structure into a vector with
 struct PNode {
     sf::Vector2f baseP1, baseP2, topP1, topP2, triangleP;
 
-    std::vector
+    std::vector<sf::Vector2f>
     points() const {
         return {baseP1, baseP2, topP1, topP2, triangleP};
     }
@@ -251,7 +251,7 @@ Anyhow, we will now implement points 1 and 2 in order. Number 1 is really quite 
 ``` cpp
 //generates a whole tree (returning its points in drawing order)
 //given the parameters of the root node and the tree depth
-std::vector
+std::vector<sf::Vector2f>
 PTree::generateTree(const sf::Vector2f& baseP1,
                     const sf::Vector2f& baseP2,
 float angle, Uint32 depth) {
@@ -260,7 +260,7 @@ float angle, Uint32 depth) {
         return {};
 
     //result of function
-    std::vector treePoints;
+    std::vector<sf::Vector2f> treePoints;
 
     //generate the node
     auto node = generateNode(baseP1, baseP2, angle);
@@ -329,7 +329,7 @@ After all this rambling, the solution might look easy: we just need to modify th
 struct PNode {
     sf::Vector2f baseP1, baseP2, topP1, topP2, triangleP;
 
-    std::vector
+    std::vector<sf::Vector2f>
     points() const {
         return {baseP1, baseP2, topP2, topP2, topP1, baseP1, topP1, topP2, triangleP};
     }
@@ -353,7 +353,7 @@ class PTree: public sf::Drawable, public sf::Transformable {
         PTree(float sideLength, float angle, Uint32 depth);
 
     private:
-        std::vector mVertices;
+        std::vector<sf::Vector2f> mVertices;
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 ```
