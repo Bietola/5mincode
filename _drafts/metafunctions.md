@@ -250,5 +250,42 @@ std::is_same_v<int, int> // returns true
 
 And of course, as you might have noticed, the standard library provides a variable template alias (that is, a *_v* equivalent) for each and every of its value-returning metafunctions.
 
-Congratulations, you can now write your own metafunctions! Granted I haven't actually given an in-depth explanation of any practical example. But remember that this is not what this post was about.
+## SFINAE
 
+So far, we've only defined metafunctions that either:
+
+* Do things regular functions do (i.e. accept *values*, return *values*).
+  is_zero, etc...
+* Accept types and return types.
+  remove_pointer, decay, etc...
+* Do something in between.
+  is_same, etc...
+
+But what if I told you that values and types are not everything that a metafunction can work with? Consider the following contentious piece of code:
+
+```cpp
+template <class T>
+struct is_bool {};
+
+template <>
+struct is_bool<bool> : std::true_type {};
+
+template <class T>
+bool is_bool_v = is_bool<T>::value;
+```
+
+If you show this innocent-looking snippet to a random guy out in the street, she would probably point out that it must have has an error. "Immagine this hypothetical situation", she would say:
+
+```cpp
+int x = 1;
+is_bool_v<decltype(x)> // compilation error: no static member named "value" inside of structure is_bool<int>
+```
+
+"The program would crash, since there's no way a call like *is_bool<int>::value* could possibly be parsed
+
+```cpp
+bool x = false;
+is_bool_v<decltype(x)> // returns true
+```
+
+Congratulations, you can now write your own metafunctions! Granted I haven't actually given an in-depth explanation of any practical example. But remember that this is not what this post was about.
