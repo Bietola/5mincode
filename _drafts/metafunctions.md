@@ -4,7 +4,7 @@ This post shouldn't exist. The only thing that brought it into this unforgiving 
 
 Broken dreams aside (hard thing to do really...), like what happens when code is refactored out into a library, this post was made to be referred to when an explanation of the current formalities and underworkings of metafunctions (as of C++17, at least) is required.
 
-Let me begin with claiming that I am no expert, and that I too have learned this from an assortment of books, talks and tutorials, of which I will try to refer to as hard as possible. The objective of this post is to take this assortment, turn into a somewhat logical "theory of metafunctions" and *bang*, offer it to the world.
+Let me begin with claiming that I am no expert, and that I too have learned all of this from an assortment of books, talks and tutorials, of which I will try to refer to as hard as possible. The objective of this post is to take this assortment, turn into a somewhat logical "theory of metafunctions" and *bang*, offer it to the world to read. What could possibly go wrong?
 
 So, let's begin!
 
@@ -16,7 +16,7 @@ As promised, here's a list of resources you might also use for learning about me
   Considered by some the ante-litteram manifesto of TMP. That said, this is not really something you should read if you wanted to achieve anything practical... take it as a history lesson on how things used to be done back then, when TMP was still considered a (controversially) lucky accident. Still has some useful insights on policy-based design in and of itself.
 * [Write Template Metaprogramming Expressively](https://www.fluentcpp.com/2017/06/02/write-template-metaprogramming-expressively/)  
   A nice case study on how to use TMP to implement contract-like capabilities (that is, in short, functions that check if certain types fit a given expression). Also covers some of the machinery behind metafunctions, *void_t*, and TMP in general.
-* [Modern Template Metaprogramming, a Compendium](https://www.youtube.com/watch?v=Am2is2QCvxY)  
+* [Modern Template Metaprogramming, a Compendium](https://www.youtube.com/watch?v=Am2is2QCvxY)
   A very complete cppcon talk by one of the fathers of C++ templates... what could you want more? For me, this was a more complete overview of what the above post refers to as *"low-level TMP"*. Also covers how the C++ standard evolved over the years to simplify certain TMP paradigms (such as typetraits), even though there is still much room for improvement (*read previous post for details*).
 * [Practical C++ Metaprogramming](https://www.researchgate.net/publication/323994820_Practical_C_Metaprogramming)  
   A very deep, very recent, diehard dive into modern C++ metaprogramming (think encapsulating-variadic-parameter-packs-into-tuples kind of diehard), all while tackling practical problems. As I read this, I kept thinking about Alexandrescu's older book **Modern C++ Design** and the limitations that its author had to face back then. The two books try to implement similar tools, but what initially required esoteric hacks now seems to smoothly roll out of the standard library.
@@ -117,6 +117,7 @@ public:
 
 Isn't it wonderful? Unfortunately, a full explanation is way out the scope of this post, but I figure that showing it might ignite a passion for type manipulation among readers.
 
+<a id="Making-metafunctions-more-readable"></a>
 ## Making metafunctions more readable
 
 Inspirational code aside, let's look at another classic type manipulation classic (or rather, type manipulation helper) function:
@@ -261,27 +262,43 @@ So far, we've only defined metafunctions that either:
 * Do something in between.
   is_same, etc...
 
-But what if I told you that values and types are not everything that a metafunction can work with? Consider the following contentious piece of code:
+But what if I told you that values and types are not everything that a metafunction can work with? Consider the following (rather contentious) piece of code:
 
 ```cpp
 template <class T>
 struct is_bool {};
 
-template <>
-struct is_bool<bool> : std::true_type {};
+// other suspicious code...
 
-template <class T>
-bool is_bool_v = is_bool<T>::value;
+int main() {
+    std::cout << std::boolalpha << is_bool<bool>::value << "\n";
+    return 0;
+}
 ```
 
-If you show this innocent-looking snippet to a random guy out in the street, she would probably point out that it must have has an error. "Immagine this hypothetical situation", she would say:
+If you show this innocent-looking snippet to a random guy out in the street, she would probably point out that it must have has an error. "There's no way this could ever compile!", would this hypothetical person say, "since the *is_bool* class template *does not* have a *::value* member."
+
+Still this code compiles... and prints *true*.
+
+You're probably now wondering what the *suspicious code* comment is all about. Well of course it's other template code! A template specialization, to be exact.
 
 ```cpp
-int x = 1;
-is_bool_v<decltype(x)> // compilation error: no static member named "value" inside of structure is_bool<int>
+#include <type_traits> // for std::true_type
+
+template <class T>
+struct is_bool {};
+
+// the suspicious code
+template <>
+struct is_bool<bool> : std::true_type {}
+
+int main() {
+    std::cout << std::boolalpha << is_bool<bool>::value << "\n";
+    return 0;
+}
 ```
 
-"The program would crash, since there's no way a call like *is_bool<int>::value* could possibly be parsed
+You might be starting to understand of why this compiles. Put simply, the *is_bool<bool>* template specialization is picked by the compiler, since *is_bool<bool>* is exactly what is requrested at call site. And the *is_bool<bool>* **struct** actually has a *value* member (if you're confused of why that is, you might want to read [the previous section](#Making-metafunctions-more-readable)).
 
 ```cpp
 bool x = false;
