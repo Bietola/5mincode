@@ -1,29 +1,38 @@
 ## The useless personal introduction
 
-This post shouldn't exist. The only thing that brought it into this unforgiving world is its writer's complete lack of summarization skills. This also happens to be the same particular type of incompetence that filled the writer's sad life with unfinished libraries and frameworks, preventing the fulfillment of his only one and true desire: a finished project.
+This series of posts shouldn't exist. The only thing that brought it into this unforgiving world is its writer's complete lack of summarization skills. This also happens to be the same particular type of incompetence that filled the writer's sad life with unfinished libraries and frameworks, preventing the fulfillment of his only one and true desire: a finished project.
 
-Broken dreams aside (hard thing to do really...), like what happens when code is refactored out into a library, this post was made to be referred to when an explanation of the current formalities and underworkings of metafunctions (as of C++17, at least) is required.
+Broken dreams aside (hard thing to do really...), like what happens when code is refactored out into a library, these posts were made to be referred to when an explanation of the current formalities and underworkings of metafunctions (as of C++17, at least) is required.
 
-Let me begin with claiming that I am no expert, and that I too have learned all of this from an assortment of books, talks and tutorials, of which I will try to refer to as hard as possible. The objective of this post is to take this assortment, turn into a somewhat logical "theory of metafunctions" and *bang*, offer it to the world to read. What could possibly go wrong?
+Let me begin with claiming that I am no expert, and that I too have learned all of this from an assortment of books, talks and tutorials, of which I will try to refer to as hard as possible. My objective here is to take this assortment, turn into a somewhat logical "theory of metafunctions" and *bang*, offer it to the world to read. What could possibly go wrong?
 
 So, let's begin!
 
+## So much posts
+
+As of now, here are the topics I would like to cover:
+
+* **this post**: Understanding of metafunction syntax for compile-time value/type manipulation.
+* **work in progress**: Manipulating something that is neither a type, nor a value: ~~*black magic*~~ *invalid state*, occasionally (but not exclusively) using the power of a C++ exclusive feature: *SFINAE*.
+* **in the future**: Creating a rudimentary "*meta-stl*" with compile-time containers and algorithms.
+* **in the future**: Study of already existing metafunction-based libraries.
+
 ## Giants and Shoulders
 
-As promised, here's a list of resources you might also use for learning about metafuncitons (apart from this post, that is).
+As promised, here's a list of resources you might also use for learning about metafunctions (apart from this post, that is).
 
 * [Modern C++ Design](https://en.wikipedia.org/wiki/Modern_C%2B%2B_Design)  
-  Considered by some the ante-litteram manifesto of TMP. That said, this is not really something you should read if you wanted to achieve anything practical... take it as a history lesson on how things used to be done back then, when TMP was still considered a (controversially) lucky accident. Still has some useful insights on policy-based design in and of itself.
+  Considered by some the ante-litteram manifesto of TMP. That said, this is not really something you should read if you want to achieve anything practical... take it as a history lesson on how things used to be done back then, when TMP was still considered a (controversially) lucky accident. Still has some useful insights on policy-based design (a programming style invented by the author) in and of itself.
 * [Write Template Metaprogramming Expressively](https://www.fluentcpp.com/2017/06/02/write-template-metaprogramming-expressively/)  
   A nice case study on how to use TMP to implement contract-like capabilities (that is, in short, functions that check if certain types fit a given expression). Also covers some of the machinery behind metafunctions, *void_t*, and TMP in general.
 * [Modern Template Metaprogramming, a Compendium](https://www.youtube.com/watch?v=Am2is2QCvxY)
-  A very complete cppcon talk by one of the fathers of C++ templates... what could you want more? For me, this was a more complete overview of what the above post refers to as *"low-level TMP"*. Also covers how the C++ standard evolved over the years to simplify certain TMP paradigms (such as typetraits), even though there is still much room for improvement (*read previous post for details*).
+  A very complete cppcon talk by one of the fathers of C++ templates. what could you want more? For me, this was a more complete overview of what the above post refers to as *"low-level TMP"*. Also covers how the C++ standard evolved over the years to simplify certain TMP paradigms (such as typetraits), even though there is still much room for improvement (*read previous post for details*).
 * [Practical C++ Metaprogramming](https://www.researchgate.net/publication/323994820_Practical_C_Metaprogramming)  
   A very deep, very recent, diehard dive into modern C++ metaprogramming (think encapsulating-variadic-parameter-packs-into-tuples kind of diehard), all while tackling practical problems. As I read this, I kept thinking about Alexandrescu's older book **Modern C++ Design** and the limitations that its author had to face back then. The two books try to implement similar tools, but what initially required esoteric hacks now seems to smoothly roll out of the standard library.
 * [How to Make SFINAE Pretty](https://www.fluentcpp.com/2018/05/15/make-sfinae-pretty-1-what-value-sfinae-brings-to-code/)  
   Yes, another **Fluent C++** post (I love that site, if you can't already tell). As it always is with Jonathan, the article is aimed at simplifying yet another abstruse C++ concept. It just happens to be that the topic treated is essential to TMP.
 * [Your Own Type Predicate](https://akrzemi1.wordpress.com/2017/12/02/your-own-type-predicate/)  
-  Admittedly a post that made me click about a lot of stuff, most prominently *SFINAE* and its relation to *void_t*'s required existence to implement contracts as of C++17. All in all a very pragmatic and eye-opening introduction to metafunctions and some of their uses and my go-to post when I need a review (apart from my own, of course).
+  Admittedly a post that made me click about a lot of stuff, most prominently *SFINAE* and its relation to *void_t*'s required existence to implement contracts as of C++17. All in all a very pragmatic and eye-opening introduction to metafunctions and some of their uses. Also my go-to post when I need a review (apart from my own, of course).
 
 ## How metafunctions work
 
@@ -52,6 +61,7 @@ plus_one<1>::value // returns 2
 Mere simplification can sometimes expose even the nastiest of paradigms. But in case it didn't suffice:
 
 * The function only has one parameter: *num*, which is of type *int*. This, in technical terms, is called a **template parameter**.
+
 * The function has a return value of *num + 1*, also of type *int*, named *value*.
 
 Wait, a *named* return value? Well yes... that's how it is with metafunctions (at least for now). And naming it *value* - along with *type* for, well, types (see example below) - is a common convention. Common enough to be ubiquitous throughout the standard library.
@@ -70,18 +80,24 @@ typename std::remove_pointer<int*>::type x = 10;
 std::cout << "x is an int of value " << x << std::endl;
 ```
 
-Again, don't be scared by the gnarly syntax. Here's all that's happening: the *std::remove_pointer* function takes in a **type** (*int\**) and returns another, different **type** (*int*). The *typename* keyword is just there to help the compiler figure out that we intend to return is indeed a **type**, which is exactly what we do for "assigning" *int* to x.
+Again, don't be scared by the gnarly syntax. Here's all that's happening: the *std::remove_pointer* function takes in a **type** (*int\**) and returns another, different **type** (*int*). The *typename* keyword is just there to help the compiler figure out that what we intend to return is indeed a **type**, which is exactly what we do for declaring x as and integer.
 
 How is *std::remove_pointer* implemented? Like this:
 
 ``` cpp
-template <class T> struct remote_pointer     { using type = T; }
-template <class T> struct remote_pointer<T*> { using type = T; }
+template <class T> struct remove_pointer     { using type = T; }
+template <class T> struct remove_pointer<T*> { using type = T; }
 ```
 
-Wait a second, why is there an extra set of angle brackets!? That's because of template specialization, another essential tool in the template metaprogramming toolbox. It works by enabling the programmer to specify specific **patterns** against which the received template parameters are matched. The more specific, the better. The non-specialized version is kept as a fall back in case the others fail.
+Wait a second, why is there an extra set of angle brackets!?
 
-In this case, if the *std::remove_pointer* function receives *int\** as a template parameter, the specialized version of the function template kicks in, as *int\** is successfully matched against *T\**, (*T* being *int*, in this case).
+First of all, calm down.
+
+Jeez.
+
+Then realize that it's just because of template specialization, another essential tool in the template metaprogramming toolbox. It works by enabling the programmer to specify specific **patterns** against which the received template parameters are matched. The more specific, the better. The non-specialized version is kept as a fall back in case the others fail.
+
+In our case, if the *std::remove_pointer* function receives *int\** as a template parameter, the specialized version of the function template kicks in, as *int\** is successfully matched against *T\**, (*T* being recognized as *int*, in this case).
 
 To give another example, here is the full implementation of *std::remove_pointer*, taken from the cppreference website:
 
@@ -95,7 +111,15 @@ template <class T> struct remove_pointer<T* const volatile> { using type = T };
 
 As you can see, the same technique is applied to handle more subtle edge cases. For instance, now a *int\* const* will gladly be accepted by the function and transformed into an *int* (deduced as the value of *T* from the *T\* const* pattern).
 
-But removing qualifiers from types is only the tip of the type manipulation iceberg. Take for instance this jewel of type manipulation, *std::decay* (also stolen from cppreference):
+The keen-minded among you might be thinking that we could simplify our *remove_pointer* function by using other "qualifier removers":
+
+**SEI ARRIVATO QUI CICCIONE**
+
+``` cpp
+```
+
+But removing qualifiers from types is only the tip of the type manipulation iceberg.
+Take for instance this jewel of type manipulation, *std::decay* (also stolen from cppreference):
 
 ``` cpp
 template< class T >
@@ -251,8 +275,6 @@ std::is_same_v<int, int> // returns true
 
 And of course, as you might have noticed, the standard library provides a variable template alias (that is, a *_v* equivalent) for each and every of its value-returning metafunctions.
 
-## SFINAE
-
 So far, we've only defined metafunctions that either:
 
 * Do things regular functions do (i.e. accept *values*, return *values*).
@@ -263,9 +285,8 @@ So far, we've only defined metafunctions that either:
   is_same, etc...
 
 But what if I told you that values and types are not everything that a metafunction can work with? Consider the following (rather contentious) piece of code:
-If you show this innocent-looking snippet to a random guy out in the street, she would probably point out that it must have has an error. "There's no way this could ever compile!", would this hypothetical person say, "since the *is_bool* class template *does not* have a *::value* member."
 
-```cpp
+``` cpp
 template <class T>
 struct is_bool {};
 
@@ -277,6 +298,7 @@ int main() {
 }
 ```
 
+If you show this innocent-looking snippet to a random guy out in the street, she would probably point out that it must have has an error. "There's no way this could ever compile!", would this hypothetical person say, "since the *is_bool* class template *does not* have a *::value* member."
 Still this code compiles... and prints *true*.
 
 You're probably now wondering what the *suspicious code* comment is all about. Well of course it's other template code! A template specialization, to be exact:
