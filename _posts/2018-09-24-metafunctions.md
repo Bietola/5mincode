@@ -2,6 +2,7 @@
 
 This series of posts shouldn't exist. The only thing that brought it into this unforgiving world is its writer's complete lack of summarization skills. This also happens to be the same particular type of incompetence that filled the writer's sad life with unfinished libraries and frameworks, preventing the fulfillment of his only one and true desire: a finished project.
 
+
 Broken dreams aside (hard thing to do really...), like what happens when code is refactored out into a library, these posts were made to be referred to when an explanation of the current formalities and underworkings of metafunctions (as of C++17, at least) is required.
 
 Let me begin with claiming that I am no expert, and that I too have learned all of this from an assortment of books, talks and tutorials, of which I will try to refer to as hard as possible. My objective here is to take this assortment, turn into a somewhat logical "theory of metafunctions" and *bang*, offer it to the world to read. What could possibly go wrong?
@@ -68,7 +69,7 @@ Wait, a *named* return value? Well yes... that's how it is with metafunctions (a
 
 ## Types as values
 
-What's been dealt with so far is not that much interesting. What's the difference in using a metafunction if it only lets us do mundane things like summing integers?
+What's been dealt with so far might not be that much interesting. What's the difference in using a metafunction if it only lets us do mundane things like summing integers?
 
 First of all, it sounds way cooler.
 
@@ -80,7 +81,7 @@ typename std::remove_pointer<int*>::type x = 10;
 std::cout << "x is an int of value " << x << std::endl;
 ```
 
-Again, don't be scared by the gnarly syntax. Here's all that's happening: the *std::remove_pointer* function takes in a **type** (*int\**) and returns another, different **type** (*int*). The *typename* keyword is just there to help the compiler figure out that what we intend to return is indeed a **type**, which is exactly what we do for declaring x as and integer.
+Again, don't be scared by the gnarly syntax. Here's all that's happening: the *std::remove_pointer* function takes in a **type** (*int\**) and returns another, different **type** (*int*). The *typename* keyword is just there to help the compiler figure out that what we intend to return is indeed a **type**, which is exactly what we do for declaring x as an integer.
 
 How is *std::remove_pointer* implemented? Like this:
 
@@ -95,7 +96,7 @@ First of all, calm down.
 
 Jeez.
 
-Then realize that it's just because of template specialization, another essential tool in the template metaprogramming toolbox. It works by enabling the programmer to specify specific **patterns** against which the received template parameters are matched. The more specific, the better. The non-specialized version is kept as a fall back in case the others fail.
+Then realize that it's just because of template specialization, another essential tool in the template metaprogramming toolbox. It works by enabling the programmer to specify specific **patterns** against which the received template parameters are matched. The more specific, the better. The non-specialized version is kept as a fallback in case the others fail.
 
 In our case, if the *std::remove_pointer* function receives *int\** as a template parameter, the specialized version of the function template kicks in, as *int\** is successfully matched against *T\**, (*T* being recognized as *int*, in this case).
 
@@ -109,14 +110,7 @@ template <class T> struct remove_pointer<T* volatile>       { using type = T };
 template <class T> struct remove_pointer<T* const volatile> { using type = T };
 ```
 
-As you can see, the same technique is applied to handle more subtle edge cases. For instance, now a *int\* const* will gladly be accepted by the function and transformed into an *int* (deduced as the value of *T* from the *T\* const* pattern).
-
-The keen-minded among you might be thinking that we could simplify our *remove_pointer* function by using other "qualifier removers":
-
-**SEI ARRIVATO QUI CICCIONE**
-
-``` cpp
-```
+As you can see, the same technique is applied to handle more subtle edge cases. For instance, now a *int\* const* will gladly be accepted by the specialization and transformed into an *int* (deduced as the value of *T* from the *T\* const* pattern).
 
 But removing qualifiers from types is only the tip of the type manipulation iceberg.
 Take for instance this jewel of type manipulation, *std::decay* (also stolen from cppreference):
@@ -139,12 +133,12 @@ public:
 };
 ```
 
-Isn't it wonderful? Unfortunately, a full explanation is way out the scope of this post, but I figure that showing it might ignite a passion for type manipulation among readers.
+Isn't it wonderful? Unfortunately, a full explanation is way out of the scope of this post, but I figure that showing it might ignite a passion for type manipulation among readers.
 
 <a id="Making-metafunctions-more-readable"></a>
 ## Making metafunctions more readable
 
-Inspirational code aside, let's look at another classic type manipulation classic (or rather, type manipulation helper) function:
+Inspirational code aside, let's look at another classic type manipulation - or rather, type manipulation helper - function:
 
 <a id="is_same-def"></a>
 ```cpp
@@ -155,13 +149,13 @@ template <class T>
 struct is_same<T, T> : std::true_type {};
 ```
 
-This particular function is used, quite intuitively, to check if two given types are the same. The first *struct* represents a metafuction that takes two **template parameters** and always return false... or at least it looks like false.
+This particular function is used, quite intuitively, to check if two given types are the same. The first *struct* represents a metafuction that takes two **template parameters** and always returns false... or at least it looks like false.
 
-Wait what the hell is a *std::false_type*? Well that's just the modern way to specify a metafunction return type! It does pile another level of abstraction on top, but nothing impossible to understand.
+Wait, what the hell is a *std::false_type*? Well that's just the modern way to specify a metafunction return type! It does pile another level of abstraction on top, but nothing impossible to understand.
 
-To understand *std::false_type* (and *std::true_type* for that manner) you must first understand *std::integral_constant*, which, in turn, is just an additional level of abstraction to represent compile time constants.
+To understand *std::false_type* (and *std::true_type*, for that manner) you must first understand *std::integral_constant*, which, in turn, is just an additional level of abstraction to represent compile time constants.
 
-Remember that *static constexpr int value* that we had to type in to define a metafunction return type? Well it gets kind of repetitive after a while, so the guys at the STL came up with this little struct:
+Remember that *static constexpr int value* that we had to type in to define a metafunction return type? Well it gets kind of repetitive after a while, so much so that the guys at the STL came up with this little struct:
 
 ``` cpp
 template <class T, T v>
@@ -189,7 +183,7 @@ using true_type  = std::integral_constant<bool, true>;
 using false_type = std::integral_constant<bool, false>;
 ```
 
-And possible use (also example of using patter matching for recognizing non-type template parameters):
+And possible use (also example of using pattern matching for recognizing non-type template parameters):
 
 ``` cpp
 template <int n>
@@ -216,7 +210,7 @@ struct is_zero<0> {
 All right, that's out of the way. We can now effortlessly test our is_same function. Let's use the one kindly offered to us by the **C++ standard library**:
 
 ```cpp
-std::is_same<int, int> // should return true...
+std::is_same<int, int>; // should return true...
 ```
 
 And of course the above program outputs *true*:
@@ -233,13 +227,13 @@ Oh yes, we forgot to retrieve the value! Remember that *std::is_same* is just [a
 std::is_same<int, int>::value // returns true
 ```
 
-This is a bit redundant though. After all, did ever need to specify that you needed the return value of a function upon calling it?
+This is a bit redundant though. After all, did you ever need to specify that you needed the return value of a function upon calling it?
 
 ``` cpp
 int x = f("hello")::return_value;
 ```
 
-Not really. Or at least this is what the standard committee thought. So, sometimes, out in the wild, instead of seeing this:
+Not really... or at least this is what the standard committee thought. So, sometimes, out in the wild, instead of seeing this:
 
 ``` cpp
 typename std::remove_pointer<int*>::type x = 5;
@@ -270,66 +264,21 @@ Pretty self explanatory. All using the new C++17 shiny feature of **variable tem
 So now calling our *is_same* metafunction has become a breeze:
 
 ```cpp
-std::is_same_v<int, int> // returns true
+std::is_same_v<int, int>; // returns true
 ```
 
 And of course, as you might have noticed, the standard library provides a variable template alias (that is, a *_v* equivalent) for each and every of its value-returning metafunctions.
 
-So far, we've only defined metafunctions that either:
+## Conclusion
 
-* Do things regular functions do (i.e. accept *values*, return *values*).
-  is_zero, etc...
-* Accept types and return types.
-  remove_pointer, decay, etc...
-* Do something in between.
-  is_same, etc...
+Like this post, metafunctions were really not meant to exist.
 
-But what if I told you that values and types are not everything that a metafunction can work with? Consider the following (rather contentious) piece of code:
+The template system was designed to bring generic programming to C++, so that things such as vectors could be easily used for integers (*vector<int>*) as well as for strings (*vector<string>*) without having to change the internal implementation. It was only later that some C++ developers found out that templates were actually a turing-complete DSL inside of C++... that also happened to be able to work with types.
 
-``` cpp
-template <class T>
-struct is_bool {};
+From that point on, a very frequent C++ phenomena took place: the language was awkardly expanded with retro-compatibility in mind, and metafunctions evolved to have a simpler, yet still kind of foreign, syntax.
 
-// other suspicious code...
+Still, metafunctions at their core are simple - or at least they're as simple as regular functions. All you need to understand to use them are a few levels of indirection to clean up their syntax a bit and keep them retro-compatible with the rest of C++. **Bjarne Stroustrup**, creator of the C++ language, once said this at a C++ conference:
 
-int main() {
-    std::cout << std::boolalpha << is_bool<bool>::value << "\n";
-    return 0;
-}
-```
+> Within C++, there is a much smaller and clearer language struggling to get out.
 
-If you show this innocent-looking snippet to a random guy out in the street, she would probably point out that it must have has an error. "There's no way this could ever compile!", would this hypothetical person say, "since the *is_bool* class template *does not* have a *::value* member."
-Still this code compiles... and prints *true*.
-
-You're probably now wondering what the *suspicious code* comment is all about. Well of course it's other template code! A template specialization, to be exact:
-
-```cpp
-#include <type_traits> // for std::true_type
-
-template <class T>
-struct is_bool {};
-
-// the suspicious code
-template <>
-struct is_bool<bool> : std::true_type {}
-
-int main() {
-    std::cout << std::boolalpha << is_bool<bool>::value << "\n";
-    return 0;
-}
-```
-
-You might be starting to understand why this compiles. Put simply, the *is_bool<bool>* template specialization is picked by the compiler, since *is_bool<bool>* is exactly what is requrested at call site. And the *is_bool<bool>* **struct** actually has a *value* static member (if you're confused of why that is, you might want to read [the previous section](#Making-metafunctions-more-readable)).
-
-But wait a second... is the compiler just going to ignore that *is_bool<T>::value* isn't going to compile with literally any other *T*? Well, yes. As it [the compiler] churns through code, it simply discards the *impossible to instantiate* class-template and go on trying with its specializations until it succeds.
-
-This particular phenomena is called **SFINAE**: "Substitution Failure Is Not An Error".
-
-Here **substitution** simply means "try to instantiate the class-template given a certain expression". To be as clear as possible, take our example: the compiler will first try to substitute is_bool<T>
-
-```cpp
-bool x = false;
-is_bool_v<decltype(x)> // returns true
-```
-
-Congratulations, you can now write your own metafunctions! Granted I haven't actually given an in-depth explanation of any practical example. But remember that this is not what this post was about.
+If you had to only bring one thing away with you from this post, remember this phrase; and apply it to the context of metafunctions.
