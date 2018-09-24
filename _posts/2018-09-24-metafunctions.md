@@ -1,3 +1,12 @@
+---
+layout: post
+image:
+    path: /assets/show/big_ptree.png
+    thumbnail: /assets/show/small_ptree.png
+    caption: "Yes, we will be making these things..."
+author: dincio
+---
+
 ## The useless personal introduction
 
 This series of posts shouldn't exist. The only thing that brought it into this unforgiving world is its writer's complete lack of summarization skills. This also happens to be the same particular type of incompetence that filled the writer's sad life with unfinished libraries and frameworks, preventing the fulfillment of his only one and true desire: a finished project.
