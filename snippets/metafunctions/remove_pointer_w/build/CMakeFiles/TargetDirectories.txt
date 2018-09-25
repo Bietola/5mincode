@@ -1,3 +1,0 @@
-/home/dincio/code/5mincode/snippets/metafunctions/remove_pointer/build/CMakeFiles/rebuild_cache.dir
-/home/dincio/code/5mincode/snippets/metafunctions/remove_pointer/build/CMakeFiles/Proj.dir
-/home/dincio/code/5mincode/snippets/metafunctions/remove_pointer/build/CMakeFiles/edit_cache.dir
