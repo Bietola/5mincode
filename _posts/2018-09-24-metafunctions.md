@@ -1,9 +1,9 @@
 ---
 layout: post
 image:
-    path: /assets/show/big_ptree.png
-    thumbnail: /assets/show/small_ptree.png
-    caption: "Yes, we will be making these things..."
+    path: /assets/show/astrowizard.png
+    thumbnail: /assets/show/colorcubes.jpeg
+    caption: "You shall not compile!"
 author: dincio
 ---
 
