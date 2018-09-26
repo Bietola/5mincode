@@ -15,10 +15,6 @@ image:
 author: dincio
 ---
 
-<head>
-    {% seo %}
-</head>
-
 <h2>Introduction</h2>
 You might have wondered, dear reader, about the wonderful logo of this site (or you might not have... but that's ok, don't worry). To make all of this hypothetical wandering disappear, I will dedicate this post to uncovering the identity of such a weird object.
 

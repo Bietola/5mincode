@@ -10,7 +10,6 @@ source "https://rubygems.org"
 # Happy Jekylling!
 #! FOR GEM INSTALLATION METHOD: gem "jekyll", "~> 3.8.3"
 gem "github-pages", group: :jekyll_plugins
-gem "jekyll-seo-tag"
 
 # This is the default theme for new Jekyll sites. You may change this to anything you like.
 #! DEFAULT JEKYLL THEME: gem "minima", "~> 2.0"
