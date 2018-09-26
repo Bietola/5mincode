@@ -1,9 +1,15 @@
 ---
+title: C++ Metafunctions
+
+description: An overview of C++ metafunction sytax.
+
 layout: post
+
 image:
     path: /assets/show/astrowizard.png
     thumbnail: /assets/show/colorcubes.jpeg
     caption: "You shall not compile!"
+
 author: dincio
 ---
 
