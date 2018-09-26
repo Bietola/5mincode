@@ -25,8 +25,8 @@ disqus:
 
 # Build settings
 markdown: kramdown
-#! DEFAULT JEKYLL THEME: theme: minima
-remote_theme: "mmistakes/so-simple-theme"
+theme: minima
+#! RESTORE AFTER GOOGLE CONSOLE VALIDATION: remote_theme: "mmistakes/so-simple-theme"
 plugins:
   - jekyll-feed
 
