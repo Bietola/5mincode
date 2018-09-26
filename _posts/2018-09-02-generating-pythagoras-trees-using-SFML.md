@@ -1,11 +1,23 @@
 ---
+assetid: generating-ptrees-with-sfml
+
+title: Generating Pythagoras Trees using C\+\+/SFML
+
+description: A pedantic and instructional post on generating pythagoras trees using the simple SFML library for the C++ programming language. The central aim of the lesson is to teach recursion using the psychedelic beauty of visual math. Other things, like linear algebra and lazy programming, are encountered along the path to fractal madness.
+
 layout: post
+
 image:
     path: /assets/show/big_ptree.png
     thumbnail: /assets/show/small_ptree.png
     caption: "Yes, we will be making these things..."
+
 author: dincio
 ---
+
+<head>
+    {% seo %}
+</head>
 
 <h2>Introduction</h2>
 You might have wondered, dear reader, about the wonderful logo of this site (or you might not have... but that's ok, don't worry). To make all of this hypothetical wandering disappear, I will dedicate this post to uncovering the identity of such a weird object.

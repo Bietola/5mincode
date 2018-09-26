@@ -1,4 +1,4 @@
-{% capture image_path %}/assets/posts/{{ page.date | date: "%Y-%m-%d" }}-{{ page.title | slugify }}/{{ include.name }}{% endcapture %}
+{% capture image_path %}/assets/posts/{{ page.assetid | slugify }}/{{ include.name }}{% endcapture %}
 {% capture image_abs_path %}{{ image_path | absolute_url }}{% endcapture %}
 <figure class="">
   <a href="#"><img src="{{ image_abs_path }}" alt=""></a>

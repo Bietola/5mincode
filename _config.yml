@@ -28,6 +28,7 @@ markdown: kramdown
 #! DEFAULT JEKYLL THEME: theme: minima
 remote_theme: "mmistakes/so-simple-theme"
 plugins:
+  - jekyll-seo-tag
   - jekyll-feed
 
 # Exclude from processing.
